@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Client.Data.BMD;
+using Client.Main.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace Client.Main.Core.Utilities
@@ -184,7 +185,7 @@ namespace Client.Main.Core.Utilities
             // Curated localized names are authoritative: they are guaranteed to render
             // with the active font and avoid Korean mojibake from the bundled BMD.
             bool isChinese = string.Equals(
-                Client.Main.Localization.Loc.CurrentLanguage, "zh", StringComparison.OrdinalIgnoreCase);
+                Loc.CurrentLanguage, "zh", StringComparison.OrdinalIgnoreCase);
 
             if (isChinese && s_namesZh.TryGetValue(skillId, out var zhName))
                 return zhName;

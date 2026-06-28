@@ -79,7 +79,14 @@ namespace Client.Main.Networking.PacketHandling.Handlers
                 var info = new ConnectionInfo(packet);
                 string ip = info.IpAddress;
                 ushort port = info.Port;
-                _logger.LogInformation("Game server address: {IP}:{Port}", ip, port);
+
+                // Override game server IP to localhost for local/Docker setup.
+                // Docker containers often register with an external IP that isn't
+                // reachable from the host — 127.0.0.1 always works since ports
+                // are mapped in docker-compose.
+                ip = "127.0.0.1";
+
+                _logger.LogInformation("Game server address: {IP}:{Port} (overridden to 127.0.0.1 for local setup)", ip, port);
                 _networkManager.SwitchToGameServer(ip, port);
             }
             catch (Exception ex)

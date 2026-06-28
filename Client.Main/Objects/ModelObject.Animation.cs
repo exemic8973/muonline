@@ -1,6 +1,7 @@
 using Client.Data.BMD;
 using Client.Main.Content;
 using Client.Main.Controls.UI.Game.Inventory;
+using Client.Main.Core.Utilities;
 using Client.Main.Models;
 using Client.Main.Objects.Player;
 using Client.Main.Objects.Wings;
@@ -37,7 +38,13 @@ namespace Client.Main.Objects
         {
             if (LinkParentAnimation || Model?.Actions == null || Model.Actions.Length == 0) return;
 
-            int currentActionIndex = Math.Clamp(CurrentAction, 0, Model.Actions.Length - 1);
+            // Remap from compact PlayerAction enum to classic S6 BMD action index.
+            // The Player.bmd model file uses the original MU action numbering,
+            // which has gaps the new enum removed.
+            int bmdActionIdx = BmdActionIndexMap.GetBmdIndex(CurrentAction);
+            if (bmdActionIdx < 0 || bmdActionIdx >= Model.Actions.Length) return;
+
+            int currentActionIndex = bmdActionIdx;
             var action = Model.Actions[currentActionIndex];
             if (action == null) return; // Skip animation if action is null
 

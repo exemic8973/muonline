@@ -1135,8 +1135,9 @@ namespace Client.Main.Objects.Player
 
         private void SetActionSpeed(PlayerAction action, float speed)
         {
-            int idx = (int)action;
-            if (Model?.Actions is { Length: > 0 } actions && idx < actions.Length)
+            int idx = BmdActionIndexMap.GetBmdIndex((int)action);
+            if (idx < 0) return; // no BMD counterpart
+            if (Model?.Actions is { Length: > 0 } actions && idx < actions.Length && actions[idx] != null)
                 actions[idx].PlaySpeed = speed;
         }
 
@@ -1153,7 +1154,10 @@ namespace Client.Main.Objects.Player
 
             for (int i = from; i <= to; i++)
             {
-                SetActionSpeed((PlayerAction)i, speed);
+                int bmdIdx = BmdActionIndexMap.GetBmdIndex(i);
+                if (bmdIdx < 0) continue;
+                if (Model?.Actions is { Length: > 0 } actions && bmdIdx < actions.Length && actions[bmdIdx] != null)
+                    actions[bmdIdx].PlaySpeed = speed;
             }
         }
 
