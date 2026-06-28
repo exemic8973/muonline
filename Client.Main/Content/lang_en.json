@@ -1,0 +1,18 @@
+{
+  "CharInfo_Strength": "Strength",
+  "CharInfo_Agility": "Agility",
+  "CharInfo_Vitality": "Vitality",
+  "CharInfo_Energy": "Energy",
+  "CharInfo_Leadership": "Command",
+
+  "Skill_PanelTitle": "Select Skill",
+  "Skill_Info": "Skill Info",
+  "Skill_HoverHint": "Hover a skill to see details.",
+  "Skill_TypeArea": "Area",
+  "Skill_TypeSelf": "Self",
+  "Skill_TypeTarget": "Target",
+
+  "Common_Cancel": "Cancel",
+  "Common_Confirm": "Confirm",
+  "Common_Close": "Close"
+}

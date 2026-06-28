@@ -6,6 +6,7 @@ using System.Text;
 using Client.Data.BMD;
 using Client.Main.Core.Client;
 using Client.Main.Core.Utilities;
+using Client.Main.Localization;
 using Client.Main.Models;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -53,7 +54,7 @@ namespace Client.Main.Controls.UI.Game.Skills
             // Title
             _titleLabel = new LabelControl
             {
-                Text = "Select Skill",
+                Text = Loc.Get("Skill_PanelTitle"),
                 TextColor = Color.Gold,
                 X = PADDING,
                 Y = PADDING,
@@ -76,7 +77,7 @@ namespace Client.Main.Controls.UI.Game.Skills
 
             _detailNameLabel = new LabelControl
             {
-                Text = "Skill Info",
+                Text = Loc.Get("Skill_Info"),
                 TextColor = Color.White,
                 FontSize = 14f,
                 X = DETAIL_PADDING,
@@ -98,7 +99,7 @@ namespace Client.Main.Controls.UI.Game.Skills
 
             _detailStatsLabel = new LabelControl
             {
-                Text = "Hover a skill to see details.",
+                Text = Loc.Get("Skill_HoverHint"),
                 TextColor = Color.Silver,
                 X = DETAIL_PADDING,
                 Y = DETAIL_PADDING + 46,
@@ -123,7 +124,7 @@ namespace Client.Main.Controls.UI.Game.Skills
                 .ToList();
 
             // Update title with skill count
-            _titleLabel.Text = $"Select Skill ({skills.Count} available)";
+            _titleLabel.Text = $"{Loc.Get("Skill_PanelTitle")} ({skills.Count})";
 
             // Clear existing skill slots
             foreach (var slot in _skillSlots)
@@ -251,9 +252,9 @@ namespace Client.Main.Controls.UI.Game.Skills
         {
             if (skill == null)
             {
-                _detailNameLabel.Text = "Skill Info";
+                _detailNameLabel.Text = Loc.Get("Skill_Info");
                 _detailTypeLabel.Text = string.Empty;
-                _detailStatsLabel.Text = "Hover a skill to see details.";
+                _detailStatsLabel.Text = Loc.Get("Skill_HoverHint");
                 _detailStatsLabel.TextColor = Color.Silver;
                 return;
             }
@@ -263,13 +264,13 @@ namespace Client.Main.Controls.UI.Game.Skills
 
             string typeText = type switch
             {
-                SkillType.Area => "Area",
-                SkillType.Self => "Self",
-                _ => "Target"
+                SkillType.Area => Loc.Get("Skill_TypeArea"),
+                SkillType.Self => Loc.Get("Skill_TypeSelf"),
+                _ => Loc.Get("Skill_TypeTarget")
             };
 
             _detailNameLabel.Text = SkillDatabase.GetSkillName(skill.SkillId);
-            _detailTypeLabel.Text = $"Type: {typeText}  •  Level {skill.SkillLevel}";
+            _detailTypeLabel.Text = $"{typeText}  •  Lv {skill.SkillLevel}";
 
             var sb = new StringBuilder();
             sb.AppendLine($"Skill ID: {skill.SkillId}");

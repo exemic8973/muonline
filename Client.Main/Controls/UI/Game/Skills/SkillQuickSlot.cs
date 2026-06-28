@@ -147,6 +147,19 @@ namespace Client.Main.Controls.UI.Game.Skills
         {
             base.Update(gameTime);
 
+            // Skills are delivered by the server after login, which can happen after this
+            // control is constructed. If nothing is selected yet, auto-select the first
+            // available skill so right-click casting works without forcing the player to
+            // open the selection panel first.
+            if (SelectedSkill == null)
+            {
+                var firstSkill = _characterState.GetSkills().FirstOrDefault();
+                if (firstSkill != null)
+                {
+                    OnSkillSelectedFromPanel(firstSkill);
+                }
+            }
+
             // Hover effect on hint only
             bool panelVisible = _selectionPanel?.Visible ?? false;
 

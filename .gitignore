@@ -11,9 +11,6 @@ testfiles/
 # Server config
 server/.htpasswd
 
-# Localization artifacts
-Client.Main/Content/lang_*.json
-
 # User-specific files
 *.suo
 *.user

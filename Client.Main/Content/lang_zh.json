@@ -1,0 +1,18 @@
+{
+  "CharInfo_Strength": "力量",
+  "CharInfo_Agility": "敏捷",
+  "CharInfo_Vitality": "体力",
+  "CharInfo_Energy": "能量",
+  "CharInfo_Leadership": "统率",
+
+  "Skill_PanelTitle": "选择技能",
+  "Skill_Info": "技能信息",
+  "Skill_HoverHint": "将鼠标悬停在技能上查看详情。",
+  "Skill_TypeArea": "范围",
+  "Skill_TypeSelf": "自身",
+  "Skill_TypeTarget": "目标",
+
+  "Common_Cancel": "取消",
+  "Common_Confirm": "确认",
+  "Common_Close": "关闭"
+}
