@@ -586,9 +586,8 @@ namespace Client.Main.Scenes
             return true;
         }
 
-        private bool TryConsumeSkillDelay(ushort skillId, int minDelayMs = 300)
+        private bool TryConsumeSkillDelay(ushort skillId, int delayMs = 300)
         {
-            int delayMs = Math.Max(minDelayMs, SkillDatabase.GetSkillCooldown(skillId));
             if (delayMs <= 0)
                 return true;
 

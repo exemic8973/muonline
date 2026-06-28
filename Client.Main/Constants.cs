@@ -181,8 +181,7 @@ namespace Client.Main
         public static float FOV_SCALE = 1f;
 
         // Supported fonts: Arial, NotoKR, CN (NotoSansSC with Chinese support)
-        // Default to Arial for crisp UI text; switch to CN via pause-menu language toggle.
-        public static string FONT_NAME = "Arial";
+        public static string FONT_NAME = "CN";
         // EUC-KR (code page 949) for Korean game data. Change to 936 for Chinese data.
         public static Encoding DATA_TEXT_ENCODING = Encoding.GetEncoding(949);
 

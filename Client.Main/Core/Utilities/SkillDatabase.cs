@@ -237,9 +237,9 @@ namespace Client.Main.Core.Utilities
         public static IReadOnlyDictionary<int, SkillBMD> GetAllSkills() => _skillDefinitions;
 
         /// <summary>
-        /// Gets skill mana cost. Fixed at 20 — MP requirement reduced.
+        /// Gets skill mana cost. Always 0 — free casting.
         /// </summary>
-        public static ushort GetSkillManaCost(int skillId) => 20;
+        public static ushort GetSkillManaCost(int skillId) => 0;
 
         /// <summary>
         /// Gets skill AG cost. Always 0 — AG requirement disabled.
