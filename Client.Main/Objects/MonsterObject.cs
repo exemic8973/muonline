@@ -54,7 +54,9 @@ namespace Client.Main.Objects
                 var attr = (NpcInfoAttribute)GetType()
                     .GetCustomAttributes(typeof(NpcInfoAttribute), inherit: false)
                     .FirstOrDefault();
-                _cachedDisplayName = attr?.DisplayName ?? base.DisplayName;
+                var engName = attr?.DisplayName;
+                var zhName = attr != null ? Core.Utilities.MonsterNamesZh.GetName(attr.TypeId) : null;
+                _cachedDisplayName = zhName ?? engName ?? base.DisplayName;
                 return _cachedDisplayName;
             }
         }
