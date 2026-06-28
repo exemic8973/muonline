@@ -116,14 +116,11 @@ namespace Client.Main.Controllers
 
         /// <summary>
         /// Loads the configured SpriteFont, falling back to bundled fonts if the
-        /// preferred one is missing or failed to build. This keeps the game from
-        /// crashing on boot when, for example, the localized "CN" font was not
-        /// produced by the content pipeline (e.g. the source TTF is unavailable on
-        /// the build machine). Order: configured font -> NotoKR -> Arial.
+        /// preferred one is missing or failed to build.
+        /// Order: configured font -> NotoKR -> Arial.
         /// </summary>
         private SpriteFont LoadFontWithFallback(string preferredName)
         {
-            // De-duplicated fallback chain, preferred font first.
             string[] candidates = { preferredName, "NotoKR", "Arial" };
             var tried = new HashSet<string>();
 
@@ -136,7 +133,7 @@ namespace Client.Main.Controllers
                 {
                     var font = _contentManager.Load<SpriteFont>(name);
                     if (!string.Equals(name, preferredName))
-                        Console.WriteLine($"[GraphicsManager] Font '{preferredName}' unavailable; using fallback font '{name}'.");
+                        Console.WriteLine($"[GraphicsManager] Font '{preferredName}' unavailable; using fallback '{name}'.");
                     return font;
                 }
                 catch (Exception ex)
@@ -145,7 +142,6 @@ namespace Client.Main.Controllers
                 }
             }
 
-            // Nothing loaded — surface a clear error rather than a NullReferenceException later.
             throw new InvalidOperationException(
                 $"No usable SpriteFont could be loaded (tried: {string.Join(", ", candidates)}). " +
                 "Ensure at least one font (CN/NotoKR/Arial) builds in MGContent/Content.mgcb.");
