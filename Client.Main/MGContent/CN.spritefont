@@ -10,13 +10,20 @@
     <DefaultCharacter>?</DefaultCharacter>
 
     <CharacterRegions>
+      <!-- Basic ASCII -->
       <CharacterRegion>
         <Start> </Start>
         <End>~</End>
       </CharacterRegion>
+      <!-- CJK Unified Ideographs (Chinese) -->
       <CharacterRegion>
         <Start>一</Start>
         <End>龥</End>
+      </CharacterRegion>
+      <!-- Korean Hangul Syllables -->
+      <CharacterRegion>
+        <Start>가</Start>
+        <End>힣</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

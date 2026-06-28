@@ -18,6 +18,10 @@
         <Start>가</Start>
         <End>힣</End>
       </CharacterRegion>
+      <CharacterRegion>
+        <Start>一</Start>
+        <End>龥</End>
+      </CharacterRegion>
     </CharacterRegions>
   </Asset>
 </XnaContent>
