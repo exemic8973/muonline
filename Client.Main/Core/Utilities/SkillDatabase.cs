@@ -193,7 +193,7 @@ namespace Client.Main.Core.Utilities
             if (IsDisplayableBmdName(bmdName))
                 return bmdName!;
 
-            return $"Skill {skillId}";
+            return $"技能 {skillId}";
         }
 
         /// <summary>
