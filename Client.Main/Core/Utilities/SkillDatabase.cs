@@ -182,12 +182,8 @@ namespace Client.Main.Core.Utilities
 
         public static string GetSkillName(int skillId)
         {
-            // Curated localized names are authoritative: they are guaranteed to render
-            // with the active font and avoid Korean mojibake from the bundled BMD.
-            bool isChinese = string.Equals(
-                Loc.CurrentLanguage, "zh", StringComparison.OrdinalIgnoreCase);
-
-            if (isChinese && s_namesZh.TryGetValue(skillId, out var zhName))
+            // Always prefer Chinese names when available
+            if (s_namesZh.TryGetValue(skillId, out var zhName))
                 return zhName;
 
             if (s_fallbackNames.TryGetValue(skillId, out var enName))
