@@ -177,6 +177,29 @@ namespace Client.Main.Scenes
 
             // Space bar to pick up nearest item in range
             hotkeys.OnKeyPressed(Keys.Space, PickupNearestItem, when: WhenNotUiInput);
+
+            // F3 — Open skill selection panel
+            hotkeys.OnKeyPressed(Keys.F3, OpenSkillSelection, when: WhenNotUiInput);
+
+            // Quick slot hotkeys (Q/W/E/A/S/1-3)
+            // Ctrl+key → register skill, just key → use item
+            static void QSlot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.Q, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void WSlot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.W, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void ESlot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.E, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void ASlot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.A, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void SSlot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.S, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void D1Slot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.D1, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void D2Slot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.D2, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+            static void D3Slot(HotkeyContext ctx) => QuickSlotOverlay.HandleKeyPress(Keys.D3, (ctx.Modifiers & HotkeyModifiers.Control) != 0);
+
+            hotkeys.OnKeyPressed(Keys.Q, QSlot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.W, WSlot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.E, ESlot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.A, ASlot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.S, SSlot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.D1, D1Slot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.D2, D2Slot, when: WhenNotUiInput);
+            hotkeys.OnKeyPressed(Keys.D3, D3Slot, when: WhenNotUiInput);
         }
 
         private void TogglePauseMenu(HotkeyContext context)
@@ -315,6 +338,11 @@ namespace Client.Main.Scenes
         private void ScrollChatLogPageDown(HotkeyContext context)
         {
             _chatLog?.ScrollLines(-_chatLog.NumberOfShowingLines);
+        }
+
+        private void OpenSkillSelection(HotkeyContext context)
+        {
+            _scene.OpenSkillSelectionPanel();
         }
 
         private void PickupNearestItem(HotkeyContext context)

@@ -112,6 +112,17 @@ namespace Client.Main.Controls.UI.Game.Skills
             }
         }
 
+        /// <summary>Programmatically select a skill by its ID and level.</summary>
+        public void SetSelectedSkill(ushort skillId, byte skillLevel)
+        {
+            var state = _characterState;
+            var skill = state?.GetSkills()?.FirstOrDefault(s => s.SkillId == skillId && s.SkillLevel == skillLevel);
+            if (skill != null)
+            {
+                OnSkillSelectedFromPanel(skill);
+            }
+        }
+
         public override bool OnClick()
         {
             base.OnClick();

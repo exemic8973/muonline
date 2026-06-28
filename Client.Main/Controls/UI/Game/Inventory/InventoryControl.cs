@@ -1667,6 +1667,13 @@ namespace Client.Main.Controls.UI.Game.Inventory
                     ReleasePickedItem();
                 }
             }
+            else if (QuickSlotOverlay.GetSlotIndexAt(MuGame.Instance.UiMouseState.Position) is int qsIdx && qsIdx >= 0)
+            {
+                if (item?.RawData is { Length: > 0 } raw)
+                    QuickSlotOverlay.RegisterPotion(qsIdx, raw);
+                AddItem(item);
+                ReleasePickedItem();
+            }
             else if (Scene?.World is Controls.WalkableWorldControl world && _network_manager_exists())
             {
                 byte tileX = world.MouseTileX;

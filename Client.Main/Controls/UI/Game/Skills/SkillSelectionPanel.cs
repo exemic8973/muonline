@@ -8,6 +8,7 @@ using Client.Main.Core.Client;
 using Client.Main.Core.Utilities;
 using Client.Main.Models;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Client.Main.Controls.UI.Game.Skills
 {
@@ -341,11 +342,20 @@ namespace Client.Main.Controls.UI.Game.Skills
         {
             base.Update(gameTime);
 
-            // Close on click outside (optional - can be enabled if desired)
-            // if (Visible && !IsMouseOver && CurrentMouseState.LeftButton == ButtonState.Pressed)
-            // {
-            //     Close();
-            // }
+            if (!Visible || _skillSlots.Count == 0) return;
+
+            // Number keys 1-9 to select a skill from the grid
+            var keyboard = MuGame.Instance.Keyboard;
+            var prev = MuGame.Instance.PrevKeyboard;
+            for (int i = 0; i < 9 && i < _skillSlots.Count; i++)
+            {
+                Keys key = (Keys)((int)Keys.D1 + i);
+                if (keyboard.IsKeyDown(key) && prev.IsKeyUp(key))
+                {
+                    _skillSlots[i].OnClick();
+                    break;
+                }
+            }
         }
     }
 }

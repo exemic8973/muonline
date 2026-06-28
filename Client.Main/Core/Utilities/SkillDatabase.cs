@@ -50,8 +50,56 @@ namespace Client.Main.Core.Utilities
         /// <summary>
         /// Gets skill name by skill ID.
         /// </summary>
-        public static string GetSkillName(int skillId) =>
-            GetSkillDefinition(skillId)?.Name ?? $"Unknown Skill {skillId}";
+        /// <summary>Hardcoded skill names for corrupted BMD entries.</summary>
+        private static readonly Dictionary<int, string> s_fallbackNames = new()
+        {
+            // Dark Wizard
+            { 1, "Energy Ball" }, { 2, "Fire Ball" }, { 3, "Power Wave" },
+            { 4, "Lightning" }, { 5, "Cyclone" }, { 6, "Explosion" },
+            { 7, "Flame" }, { 8, "Inferno" }, { 9, "Evil Spirit" },
+            { 10, "Hellfire" }, { 11, "Teleport" }, { 12, "Ice" },
+            { 13, "Meteorite" }, { 14, "Blast" }, { 15, "Poison" },
+            { 16, "Moonlight" }, { 17, "Soul Barrier" }, { 18, "Decay" },
+            { 19, "Twister" }, { 20, "Aqua Beam" },
+            // Dark Knight
+            { 21, "Slash" }, { 22, "Power Slash" }, { 23, "Cyclone" },
+            { 24, "Sword Skill" }, { 25, "Twisting Slash" }, { 26, "Rageful Blow" },
+            { 27, "Death Stab" }, { 28, "Impale" }, { 29, "Blade Skill" },
+            { 30, "Blood Storm" }, { 31, "Devil Eye" }, { 32, "Comet Fall" },
+            // Fairy Elf
+            { 33, "Arrow Bomb" }, { 34, "Penetration" }, { 35, "Ice Arrow" },
+            { 36, "Healing" }, { 37, "Greater Defense" }, { 38, "Greater Damage" },
+            { 39, "Summon Goblin" }, { 40, "Summon Stone Golem" },
+            { 41, "Summon Assassin" }, { 42, "Summon Elite Yeti" },
+            { 43, "Summon Dark Knight" }, { 44, "Summon Bali" },
+            { 45, "Summon Soldier" }, { 46, "Summon Beholder" },
+            { 47, "Heal" },
+            // Magic Gladiator
+            { 48, "Fire Slash" }, { 49, "Flame Strike" }, { 50, "Gigantic Storm" },
+            // Dark Lord
+            { 51, "Fire Breath" }, { 52, "Power Slash" }, { 53, "Critical Slash" },
+            { 55, "Summon Dark Horse" }, { 56, "Summon Dark Raven" },
+            { 57, "Cure" }, { 58, "Refresh" }, { 59, "Greater Fortitude" },
+            // Summoner
+            { 60, "Chain Lightning" }, { 61, "Drain Life" }, { 62, "Lightning Orb" },
+            { 63, "Sleep" }, { 64, "Summon Satyros" }, { 65, "Summon Queen" },
+            { 66, "Summon Golem" }, { 67, "Summon Wizard" },
+            { 68, "Summon Priest" }, { 69, "Summon Storm" },
+            // Rage Fighter
+            { 70, "Iron Defense" }, { 71, "Critical Damage" },
+            { 74, "Beast Charge" }, { 75, "Dragon Kick" }, { 76, "Dragon Lore" },
+            { 77, "Phoenix Shot" },
+            // Common / Scrolls
+            { 200, "Horse Riding" }, { 201, "Horse Attack" },
+        };
+
+        public static string GetSkillName(int skillId)
+        {
+            var bmdName = GetSkillDefinition(skillId)?.Name;
+            if (!string.IsNullOrEmpty(bmdName) && bmdName.Length > 1 && !bmdName.StartsWith("Unknown"))
+                return bmdName;
+            return s_fallbackNames.TryGetValue(skillId, out var name) ? name : $"Skill {skillId}";
+        }
 
         /// <summary>
         /// Gets skill type (AREA/TARGET/SELF) by skill ID.

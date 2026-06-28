@@ -1,7 +1,7 @@
 ﻿using Client.Main;
 
 #if DEBUG
-Constants.DataPath = @"C:\Games\MU_Red_1_20_61_Full\Data";
+Constants.DataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Data");
 #endif
 
 using var game = new MuGame();

@@ -34,7 +34,14 @@ namespace Client.Main.Controls.UI.Game.Character
             410f
         };
 
-        private static readonly string[] s_statShortNames = { "STR", "AGI", "STA", "ENE", "CMD" };
+        private string[] StatShortNames => new[]
+        {
+            Localization.Loc.Get("CharInfo_Strength"),
+            Localization.Loc.Get("CharInfo_Agility"),
+            Localization.Loc.Get("CharInfo_Vitality"),
+            Localization.Loc.Get("CharInfo_Energy"),
+            Localization.Loc.Get("CharInfo_Leadership"),
+        };
 
         private static readonly string[] s_tableTexturePaths =
         {
@@ -526,7 +533,7 @@ namespace Client.Main.Controls.UI.Game.Character
                     for (int i = 0; i < statBoxCount; i++)
                     {
                         spriteBatch.DrawString(font,
-                            s_statShortNames[i],
+                            StatShortNames[i],
                             new Vector2(labelX, s_statRowY[i] - 1f),
                             new Color(230, 230, 0),
                             0f,
@@ -978,6 +985,24 @@ namespace Client.Main.Controls.UI.Game.Character
 
         private void OnStatButtonClicked(int statIndex)
         {
+            // Determine how many points to add based on modifier keys:
+            //   No modifier → 1 point
+            //   Shift      → 10 points
+            //   Ctrl       → 100 points
+            var keyboard = MuGame.Instance.Keyboard;
+            int count = 1;
+            string countLabel = "";
+            if (keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl))
+            {
+                count = 100;
+                countLabel = "×100";
+            }
+            else if (keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift))
+            {
+                count = 10;
+                countLabel = "×10";
+            }
+
             SoundController.Instance.PlayBuffer("Sound/iButtonClick.wav");
 
             if (_networkManager == null || !_networkManager.IsConnected || _networkManager.CurrentState < ClientConnectionState.InGame)
@@ -1013,8 +1038,29 @@ namespace Client.Main.Controls.UI.Game.Character
             var service = _networkManager.GetCharacterService();
             if (service != null)
             {
-                _ = service.SendIncreaseCharacterStatPointRequestAsync(attributeToSend);
-                _logger.LogInformation("Sent request to add point to {Attribute}.", attributeToSend);
+                // Send multiple stat-increase requests in a quick burst
+                _ = System.Threading.Tasks.Task.Run(async () =>
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        try
+                        {
+                            await service.SendIncreaseCharacterStatPointRequestAsync(attributeToSend);
+                            // Small delay to avoid flooding the server
+                            if (count > 1)
+                                await System.Threading.Tasks.Task.Delay(2);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Stat increase failed on iteration {Iteration}", i);
+                            break;
+                        }
+                    }
+                });
+
+                string attrName = attributeToSend.ToString();
+                _logger.LogInformation("Sent request to add {Count} point(s) to {Attribute}{Label}.",
+                    count, attrName, countLabel);
             }
             else
             {

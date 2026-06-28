@@ -643,6 +643,8 @@ namespace Client.Main.Controls.UI.Game.PauseMenu
                     ref categoryX, categoryWidth, categoryHeight, categorySpacing, categoriesPerRow, ref categoryIndex);
                 AddCategoryButton("Performance", () => BuildPerformanceCategory(), categoryStartY,
                     ref categoryX, categoryWidth, categoryHeight, categorySpacing, categoriesPerRow, ref categoryIndex);
+                AddCategoryButton("🌐 Language", () => BuildLanguageCategory(), categoryStartY,
+                    ref categoryX, categoryWidth, categoryHeight, categorySpacing, categoriesPerRow, ref categoryIndex);
 
                 _closeButton = new ButtonControl
                 {
@@ -933,6 +935,22 @@ namespace Client.Main.Controls.UI.Game.PauseMenu
                 });
             }
 
+            private void BuildLanguageCategory()
+            {
+                BuildCategory("Language", (ref int currentY) =>
+                {
+                    string current = Localization.Loc.CurrentLanguage;
+                    AddOption("English", () => current == "en", value =>
+                    {
+                        if (value) Localization.Loc.CurrentLanguage = "en";
+                    }, ref currentY, OptionRowHeight, RefreshOptions);
+                    AddOption("中文 (Chinese)", () => current == "zh", value =>
+                    {
+                        if (value) Localization.Loc.CurrentLanguage = "zh";
+                    }, ref currentY, OptionRowHeight, RefreshOptions);
+                });
+            }
+
             private void BuildDisplayCategory()
             {
                 BuildCategory("Display", (ref int currentY) =>
@@ -940,61 +958,40 @@ namespace Client.Main.Controls.UI.Game.PauseMenu
                     var settings = MuGame.AppSettings?.Graphics;
                     if (settings == null) return;
 
-                    // Get supported display modes from adapter
-                    var adapter = GraphicsManager.Instance?.GraphicsDevice?.Adapter ?? GraphicsAdapter.DefaultAdapter;
-                    var maxDisplayMode = adapter.CurrentDisplayMode;
-                    int maxWidth = maxDisplayMode.Width;
-                    int maxHeight = maxDisplayMode.Height;
-
-                    // Helper to check if resolution is supported by adapter for fullscreen
-                    bool IsResolutionSupported(int w, int h)
+                    void AddResolutionOption(int w, int h, string label, ref int y)
                     {
-                        // Always allow resolutions up to max for windowed mode
-                        if (!settings.IsFullScreen) return w <= maxWidth && h <= maxHeight;
-
-                        // For fullscreen, check if adapter supports this mode
-                        foreach (var mode in adapter.SupportedDisplayModes)
+                        // Always allow in windowed mode; in fullscreen check adapter
+                        bool supported = true;
+                        if (settings.IsFullScreen)
                         {
-                            if (mode.Width == w && mode.Height == h)
-                                return true;
+                            var adapter = GraphicsManager.Instance?.GraphicsDevice?.Adapter ?? GraphicsAdapter.DefaultAdapter;
+                            var maxDisplayMode = adapter.CurrentDisplayMode;
+                            if (w > maxDisplayMode.Width || h > maxDisplayMode.Height)
+                                supported = false;
                         }
-                        return false;
+                        if (!supported) return;
+
+                        AddOption(label, () => settings.Width == w && settings.Height == h,
+                            value => { if (value) SetResolution(w, h); },
+                            ref y, OptionRowHeight);
                     }
 
-                    AddHeading("Resolution", ref currentY);
+                    AddHeading("Resolution (16:9)", ref currentY);
+                    AddResolutionOption(1280, 720, "1280×720 (HD)", ref currentY);
+                    AddResolutionOption(1366, 768, "1366×768", ref currentY);
+                    AddResolutionOption(1600, 900, "1600×900 (HD+)", ref currentY);
+                    AddResolutionOption(1920, 1080, "1920×1080 (Full HD)", ref currentY);
+                    AddResolutionOption(2560, 1440, "2560×1440 (QHD)", ref currentY);
+                    AddResolutionOption(3840, 2160, "3840×2160 (4K UHD)", ref currentY);
 
-                    // Standard 16:9 resolutions only - to maintain UI aspect ratio
-                    if (IsResolutionSupported(1280, 720))
-                    {
-                        AddOption("1280x720", () => settings.Width == 1280 && settings.Height == 720, value =>
-                        {
-                            if (value) SetResolution(1280, 720);
-                        }, ref currentY, OptionRowHeight);
-                    }
-
-                    if (IsResolutionSupported(1920, 1080))
-                    {
-                        AddOption("1920x1080", () => settings.Width == 1920 && settings.Height == 1080, value =>
-                        {
-                            if (value) SetResolution(1920, 1080);
-                        }, ref currentY, OptionRowHeight);
-                    }
-
-                    if (IsResolutionSupported(2560, 1440))
-                    {
-                        AddOption("2560x1440", () => settings.Width == 2560 && settings.Height == 1440, value =>
-                        {
-                            if (value) SetResolution(2560, 1440);
-                        }, ref currentY, OptionRowHeight);
-                    }
-
-                    if (IsResolutionSupported(3840, 2160))
-                    {
-                        AddOption("3840x2160", () => settings.Width == 3840 && settings.Height == 2160, value =>
-                        {
-                            if (value) SetResolution(3840, 2160);
-                        }, ref currentY, OptionRowHeight);
-                    }
+                    currentY += 6;
+                    AddHeading("16:10 & Ultrawide (21:9)", ref currentY);
+                    AddResolutionOption(1280, 800, "1280×800", ref currentY);
+                    AddResolutionOption(1680, 1050, "1680×1050", ref currentY);
+                    AddResolutionOption(1920, 1200, "1920×1200", ref currentY);
+                    AddResolutionOption(2560, 1080, "2560×1080 (UW Full HD)", ref currentY);
+                    AddResolutionOption(2560, 1600, "2560×1600", ref currentY);
+                    AddResolutionOption(3440, 1440, "3440×1440 (UW QHD)", ref currentY);
 
                     currentY += 8;
                     AddHeading("Window Mode", ref currentY);

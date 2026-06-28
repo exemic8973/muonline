@@ -315,6 +315,12 @@ namespace Client.Main
             }
             bootLogger.LogInformation("✅ Configuration loaded.");
 
+            // --- Initialize Localization ---
+            Localization.Loc.Initialize("zh");
+
+            // --- Set text encoding for game data (EUC-KR for Korean data) ---
+            Client.Data.BMD.SkillBMDReader.TextEncoding = Constants.DATA_TEXT_ENCODING;
+
             // --- Initialize Network Manager ---
             // Needs CharacterState and ScopeManager - create basic instances for now
             // You'll likely manage these more centrally later

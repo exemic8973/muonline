@@ -180,9 +180,10 @@ namespace Client.Main
 
         public static float FOV_SCALE = 1f;
 
-        // Supported fonts: Arial & NotoKR 
-        public static string FONT_NAME = "Arial";
-        public static Encoding DATA_TEXT_ENCODING = Encoding.UTF8;
+        // Supported fonts: Arial, NotoKR, CN (Microsoft YaHei with Chinese support)
+        public static string FONT_NAME = "CN";
+        // EUC-KR (code page 949) for Korean game data. Change to 936 for Chinese data.
+        public static Encoding DATA_TEXT_ENCODING = Encoding.GetEncoding(949);
 
         static Constants()
         {
@@ -236,6 +237,7 @@ namespace Client.Main
             SHADOW_BIAS = 0.005f;
             SHADOW_NORMAL_BIAS = 0.008f;
 
+            SETTINGS_PATH = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
             DataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
         }
 
@@ -245,7 +247,7 @@ namespace Client.Main
             DRAW_BOUNDING_BOXES = false;
             BACKGROUND_MUSIC = false;
             SOUND_EFFECTS = false;
-            SHOW_DEBUG_PANEL = true;
+            SHOW_DEBUG_PANEL = false;
         }
 #endif
     }

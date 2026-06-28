@@ -190,6 +190,11 @@ namespace Client.Main.Scenes
             _skillQuickSlot.BringToFront();
             _skillController = new GameSceneSkillController(this, _skillQuickSlot, _logger, _duelController.IsDuelAttackTarget);
 
+            // Quick slot overlay (invisible hit-test on decorative QWE/ASD/123 textures)
+            var quickSlots = new QuickSlotOverlay();
+            Controls.Add(quickSlots);
+            quickSlots.BringToFront();
+
             // Experience bar
             var experienceBar = new ExperienceBarControl(MuGame.Network.GetCharacterState());
             Controls.Add(experienceBar);
@@ -713,6 +718,25 @@ namespace Client.Main.Scenes
                 }
             }
             base.Dispose();
+        }
+
+        /// <summary>Returns the skill quick slot control.</summary>
+        public Controls.UI.Game.Skills.SkillQuickSlot? GetSkillQuickSlot() => _skillQuickSlot;
+
+        /// <summary>Opens the skill selection panel (bound to F3).</summary>
+        public void OpenSkillSelectionPanel()
+        {
+            if (_skillQuickSlot != null && _skillSelectionPanel != null)
+            {
+                if (_skillSelectionPanel.Visible)
+                    _skillSelectionPanel.Close();
+                else
+                {
+                    var state = MuGame.Network?.GetCharacterState();
+                    if (state != null)
+                        _skillSelectionPanel.Open(state);
+                }
+            }
         }
     }
 }

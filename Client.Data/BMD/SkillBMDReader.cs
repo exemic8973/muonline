@@ -8,6 +8,9 @@ namespace Client.Data.BMD
 {
     public class SkillBMDReader : BaseReader<Dictionary<int, SkillBMD>>
     {
+        /// <summary>Text encoding for skill names. Default EUC-KR (949) for Korean data. Set to 936 for Chinese.</summary>
+        public static Encoding TextEncoding { get; set; } = Encoding.UTF8;
+
         private const int MaxSkills = 1024;
         private const int RecordSize = 88;
         private const int NameLength = 32;
@@ -34,7 +37,7 @@ namespace Client.Data.BMD
                 nullIndex = NameLength;
             }
 
-            skill.Name = Encoding.UTF8.GetString(nameSpan.Slice(0, nullIndex)).TrimEnd();
+            skill.Name = TextEncoding.GetString(nameSpan.Slice(0, nullIndex)).TrimEnd();
 
             var offset = NameLength;
 

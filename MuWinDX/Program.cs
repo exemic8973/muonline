@@ -1,8 +1,14 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
 using Client.Main;
 
+// Must register code pages BEFORE any access to Constants (which uses EUC-KR encoding 949)
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
 #if DEBUG
-Constants.DataPath = @"C:\Games\MU_Red_1_20_61_Full\Data";
+Constants.DataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "Data");
 #endif
 
 Application.SetHighDpiMode(HighDpiMode.SystemAware);

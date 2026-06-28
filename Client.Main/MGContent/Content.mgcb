@@ -37,6 +37,12 @@
 /processorParam:PremultiplyAlpha=True
 /build:NotoKR.spritefont
 
+#begin CN.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/build:CN.spritefont
+
 
 #begin FXAA.fx
 /importer:EffectImporter
