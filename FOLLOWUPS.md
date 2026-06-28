@@ -106,8 +106,57 @@ the server message resources. This is a **server** change, tracked here only for
 
 ---
 
+## P0 — F7: Some skills don't cast on right-click (only the active one works)
+
+**Symptom (reported):** only the auto-selected skill casts; after selecting another (e.g.
+Hellfire) right-click does nothing. *Names fixed separately in PR #3; this is cast behavior.*
+
+**Findings:**
+- `skill.bmd` is positional (record index == skill number), so `GetSkillDefinition(id)` is
+  fine; the controller's hardcoded IDs (Teleport=6, Twister=8, Hellfire=10, Inferno=14,
+  EvilSpirit=9) match `SkillDefinitions`.
+- Likely real causes, all currently **silent**:
+  - **Target-type** skills need a monster directly under the cursor — `GetHoveredSkillTarget`
+    returns null otherwise and nothing is sent. **Area** skills (Hellfire/Inferno/EvilSpirit)
+    cast without a target.
+  - `TryBeginSkillCast` returns false with no player feedback on insufficient **mana/AG**,
+    active cooldown (`TryConsumeSkillDelay`), or **SafeZone**.
+
+**Actions:**
+- Set `GameSceneSkillController`'s logger to Debug and capture which guard fires for a
+  failing skill; confirm `CurrentMana`/`CurrentAbility` are synced from the server.
+- Add **user-facing feedback** (chat line + error SFX) whenever a cast is rejected, so it is
+  never silent (mana/AG/cooldown/SafeZone/no-target).
+
+**Acceptance criteria:**
+- [ ] Every learned skill the player selects either casts or shows a clear on-screen reason.
+- [ ] Area skills fire without a target; target skills give feedback when nothing is targeted.
+- [ ] No silent right-click no-ops.
+
+---
+
+## P0 — F8: Chinese / IME text input on desktop
+
+**Root cause (confirmed):** `Controls/UI/TextFieldControl.cs` on Windows/Desktop polls
+`Keyboard.GetPressedKeys()` and maps via `KeyToChar` (ASCII only). It never subscribes to
+MonoGame's `GameWindow.TextInput` event (only the Android branch uses a text-input event), so
+IME-composed CJK characters never reach the field. Typing Chinese is impossible by design.
+
+**Approach:**
+- On focus (desktop), subscribe to `MuGame.Instance.Window.TextInput`; append `e.Character`
+  (delivers IME-committed Unicode on WindowsDX/DesktopGL). Unsubscribe on blur. Keep
+  Back/Enter handling. Stop using `KeyToChar` for text content on desktop.
+- Pair with **F1** so composed glyphs actually render.
+
+**Acceptance criteria:**
+- [ ] With a Chinese IME active, typing in chat/name fields inserts Chinese characters.
+- [ ] Backspace / Enter still work; pure-ASCII typing is unaffected.
+- [ ] Works on both MuWinDX and MuWinGL.
+
+---
+
 ### Working agreement
 - Implementing agent: take items top-down, **one PR per item**, reference the item ID
-  (F1…F6) in the PR title, and fill the acceptance checklist in the PR body.
+  (F1…F8) in the PR title, and fill the acceptance checklist in the PR body.
 - Reviewer (me): review each PR against the acceptance criteria above and the build/run
   checklist in `GAME_REVIEW.md` §6, then request changes or approve.
