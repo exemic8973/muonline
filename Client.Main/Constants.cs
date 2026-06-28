@@ -182,8 +182,8 @@ namespace Client.Main
 
         // Supported fonts: Arial, NotoKR, CN (NotoSansSC with Chinese support)
         public static string FONT_NAME = "NotoKR";
-        // EUC-KR (code page 949) for Korean game data.
-        public static Encoding DATA_TEXT_ENCODING = Encoding.GetEncoding(949);
+        // GBK (code page 936) for Chinese game data (雷神奇迹 EX603 简中版)
+        public static Encoding DATA_TEXT_ENCODING = Encoding.GetEncoding(936);
 
         static Constants()
         {
