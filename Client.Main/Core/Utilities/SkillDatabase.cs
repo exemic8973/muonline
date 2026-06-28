@@ -243,10 +243,9 @@ namespace Client.Main.Core.Utilities
             GetSkillDefinition(skillId)?.ManaCost ?? 0;
 
         /// <summary>
-        /// Gets skill AG cost.
+        /// Gets skill AG cost. Always 0 — AG requirement disabled.
         /// </summary>
-        public static ushort GetSkillAGCost(int skillId) =>
-            GetSkillDefinition(skillId)?.AbilityGaugeCost ?? 0;
+        public static ushort GetSkillAGCost(int skillId) => 0;
 
         /// <summary>
         /// Gets skill range/distance.
