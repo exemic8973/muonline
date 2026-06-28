@@ -109,6 +109,13 @@ namespace Client.Main.Controls.UI
             if (Scene != null) Scene.FocusControl = this;
 
             _logger?.LogDebug("TextFieldControl: OnFocus called. Subscribing to TextInput.");
+
+#if !ANDROID
+            // Subscribe to MonoGame's TextInput event for IME/desktop keyboard support
+            var window = MuGame.Instance?.Window;
+            if (window != null)
+                window.TextInput += OnDesktopTextInput;
+#endif
         }
 
         public override void OnBlur()
@@ -124,6 +131,10 @@ namespace Client.Main.Controls.UI
 #if ANDROID
             AndroidKeyboard.TextInput -= OnTextInput;
             AndroidKeyboard.Hide();
+#else
+            var window = MuGame.Instance?.Window;
+            if (window != null)
+                window.TextInput -= OnDesktopTextInput;
 #endif
         }
 
@@ -189,6 +200,47 @@ namespace Client.Main.Controls.UI
             else if (e.Character != '\0' && !char.IsControl(e.Character))
             {
                 // Standard printable character input
+                _inputText.Append(e.Character);
+                textChanged = true;
+            }
+
+            if (textChanged)
+            {
+                UpdateScrollOffset();
+                MoveCursorToEnd();
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+#endif
+
+#if !ANDROID
+        /// <summary>
+        /// Handles text input on desktop platforms (Windows/Linux/Mac).
+        /// Receives IME-composed Unicode characters through MonoGame's TextInput event.
+        /// </summary>
+        private void OnDesktopTextInput(object sender, TextInputEventArgs e)
+        {
+            if (!IsFocused) return;
+
+            bool textChanged = false;
+
+            if (e.Key == Keys.Enter)
+            {
+                EnterKeyPressed?.Invoke(this, EventArgs.Empty);
+                ValueChanged?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
+            if (e.Character == '\b' || e.Key == Keys.Back)
+            {
+                if (_inputText.Length > 0)
+                {
+                    _inputText.Remove(_inputText.Length - 1, 1);
+                    textChanged = true;
+                }
+            }
+            else if (e.Character != '\0' && !char.IsControl(e.Character))
+            {
                 _inputText.Append(e.Character);
                 textChanged = true;
             }

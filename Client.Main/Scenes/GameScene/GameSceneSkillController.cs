@@ -4,6 +4,7 @@ using Client.Data.ATT;
 using Client.Main.Controls;
 using Client.Main.Controls.UI.Game.Skills;
 using Client.Main.Core.Utilities;
+using Client.Main.Models;
 using Client.Main.Objects;
 using Client.Main.Objects.Player;
 using Microsoft.Extensions.Logging;
@@ -85,6 +86,7 @@ namespace Client.Main.Scenes
             if (terrainFlags.HasFlag(TWFlags.SafeZone))
             {
                 _logger?.LogDebug("Cannot use skill in SafeZone");
+                _scene.ChatLog?.AddMessage("System", "安全区内无法施放技能", MessageType.System);
                 _scene.SetMouseInputConsumed();
                 return;
             }
@@ -156,6 +158,12 @@ namespace Client.Main.Scenes
                         UseSkillOnPlayerTarget(skill, targetPlayer);
                     else
                         QueueSkillCast(skill, targetPlayer, allowedRange, isAreaSkill: false);
+                }
+                else if (hoveredTarget == null && !IsAreaSkill(skill.SkillId))
+                {
+                    string localizedMsg = "请将鼠标指向目标后右键施放";
+                    _scene.ChatLog?.AddMessage("System", localizedMsg, MessageType.System);
+                    _logger?.LogDebug("No valid target for skill {SkillId}.", skill.SkillId);
                 }
             }
 
@@ -534,7 +542,10 @@ namespace Client.Main.Scenes
                 return false;
 
             if (!TryConsumeSkillDelay(skill.SkillId))
+            {
+                _logger?.LogDebug("Skill {SkillId} on cooldown.", skill.SkillId);
                 return false;
+            }
 
             // Check if player has enough mana and AG to use the skill
             var characterState = MuGame.Network?.GetCharacterState();
@@ -543,15 +554,19 @@ namespace Client.Main.Scenes
                 ushort manaCost = SkillDatabase.GetSkillManaCost(skill.SkillId);
                 ushort agCost = SkillDatabase.GetSkillAGCost(skill.SkillId);
 
-                if (characterState.CurrentMana < manaCost)
+                if (manaCost > 0 && characterState.CurrentMana < manaCost)
                 {
+                    string msg = $"技能需要 {manaCost} MP，当前 {characterState.CurrentMana} MP";
+                    _scene.ChatLog?.AddMessage("System", msg, MessageType.System);
                     _logger?.LogDebug("Not enough mana to use skill {SkillId}. Required: {Required}, Current: {Current}",
                         skill.SkillId, manaCost, characterState.CurrentMana);
                     return false;
                 }
 
-                if (characterState.CurrentAbility < agCost)
+                if (agCost > 0 && characterState.CurrentAbility < agCost)
                 {
+                    string msg = $"技能需要 {agCost} AG，当前 {characterState.CurrentAbility} AG";
+                    _scene.ChatLog?.AddMessage("System", msg, MessageType.System);
                     _logger?.LogDebug("Not enough AG to use skill {SkillId}. Required: {Required}, Current: {Current}",
                         skill.SkillId, agCost, characterState.CurrentAbility);
                     return false;
