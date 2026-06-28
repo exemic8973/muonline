@@ -333,7 +333,7 @@ namespace Client.Main
             _taskScheduler = new Controllers.TaskScheduler(AppLoggerFactory);
             bootLogger.LogInformation("✅ TaskScheduler initialized.");
 
-            IsMouseVisible = false; // Keep this if you want a custom cursor
+            IsMouseVisible = true;
 
             ApplyGraphicsConfiguration(AppSettings.Graphics);
             GraphicsQualityManager.ApplyFromSettings(AppSettings.Graphics, GraphicsDevice?.Adapter ?? GraphicsAdapter.DefaultAdapter, _logger);
