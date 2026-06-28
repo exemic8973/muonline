@@ -50,90 +50,112 @@ namespace Client.Main.Core.Utilities
         /// <summary>
         /// Gets skill name by skill ID.
         /// </summary>
-        /// <summary>Hardcoded skill names for corrupted BMD entries.</summary>
+        /// <summary>
+        /// English skill names keyed by the <b>real</b> MU/OpenMU skill IDs
+        /// (authoritative source: <see cref="Client.Data.BMD.SkillDefinitions"/>).
+        /// The previous table used a fan-made sequential numbering that did not match
+        /// the IDs the server actually sends, so e.g. Lightning (id 3) was shown as
+        /// "Power Wave". Keep this in sync with SkillDefinitions.
+        /// </summary>
         private static readonly Dictionary<int, string> s_fallbackNames = new()
         {
-            // Dark Wizard
-            { 1, "Energy Ball" }, { 2, "Fire Ball" }, { 3, "Power Wave" },
-            { 4, "Lightning" }, { 5, "Cyclone" }, { 6, "Explosion" },
-            { 7, "Flame" }, { 8, "Inferno" }, { 9, "Evil Spirit" },
-            { 10, "Hellfire" }, { 11, "Teleport" }, { 12, "Ice" },
-            { 13, "Meteorite" }, { 14, "Blast" }, { 15, "Poison" },
-            { 16, "Moonlight" }, { 17, "Soul Barrier" }, { 18, "Decay" },
-            { 19, "Twister" }, { 20, "Aqua Beam" },
-            // Dark Knight
-            { 21, "Slash" }, { 22, "Power Slash" }, { 23, "Cyclone" },
-            { 24, "Sword Skill" }, { 25, "Twisting Slash" }, { 26, "Rageful Blow" },
-            { 27, "Death Stab" }, { 28, "Impale" }, { 29, "Blade Skill" },
-            { 30, "Blood Storm" }, { 31, "Devil Eye" }, { 32, "Comet Fall" },
-            // Fairy Elf
-            { 33, "Arrow Bomb" }, { 34, "Penetration" }, { 35, "Ice Arrow" },
-            { 36, "Healing" }, { 37, "Greater Defense" }, { 38, "Greater Damage" },
-            { 39, "Summon Goblin" }, { 40, "Summon Stone Golem" },
-            { 41, "Summon Assassin" }, { 42, "Summon Elite Yeti" },
-            { 43, "Summon Dark Knight" }, { 44, "Summon Bali" },
-            { 45, "Summon Soldier" }, { 46, "Summon Beholder" },
-            { 47, "Heal" },
-            // Magic Gladiator
-            { 48, "Fire Slash" }, { 49, "Flame Strike" }, { 50, "Gigantic Storm" },
-            // Dark Lord
-            { 51, "Fire Breath" }, { 52, "Power Slash" }, { 53, "Critical Slash" },
-            { 55, "Summon Dark Horse" }, { 56, "Summon Dark Raven" },
-            { 57, "Cure" }, { 58, "Refresh" }, { 59, "Greater Fortitude" },
+            // Wizard
+            { 1, "Poison" }, { 2, "Meteorite" }, { 3, "Lightning" }, { 4, "Fire Ball" },
+            { 5, "Flame" }, { 6, "Teleport" }, { 7, "Ice" }, { 8, "Twister" },
+            { 9, "Evil Spirit" }, { 10, "Hellfire" }, { 11, "Power Wave" }, { 12, "Aqua Beam" },
+            { 13, "Cometfall" }, { 14, "Inferno" }, { 15, "Teleport Ally" }, { 16, "Soul Barrier" },
+            { 17, "Energy Ball" },
+            // Knight
+            { 18, "Defense" }, { 19, "Falling Slash" }, { 20, "Lunge" }, { 21, "Uppercut" },
+            { 22, "Cyclone" }, { 23, "Slash" }, { 24, "Triple Shot" }, { 26, "Heal" },
+            { 27, "Greater Defense" }, { 28, "Greater Damage" },
+            // Elf summons
+            { 30, "Summon Goblin" }, { 31, "Summon Stone Golem" }, { 32, "Summon Assassin" },
+            { 33, "Summon Elite Yeti" }, { 34, "Summon Dark Knight" }, { 35, "Summon Bali" },
+            { 36, "Summon Soldier" },
+            // Mixed / Master
+            { 38, "Decay" }, { 39, "Ice Storm" }, { 40, "Nova" }, { 41, "Twisting Slash" },
+            { 42, "Rageful Blow" }, { 43, "Death Stab" }, { 44, "Crescent Moon Slash" },
+            { 45, "Lance" }, { 46, "Starfall" }, { 47, "Impale" }, { 48, "Swell Life" },
+            { 49, "Fire Breath" }, { 51, "Ice Arrow" }, { 52, "Penetration" },
+            { 55, "Fire Slash" }, { 56, "Power Slash" }, { 57, "Spiral Slash" },
+            { 60, "Force" }, { 61, "Fire Burst" }, { 62, "Earthshake" }, { 63, "Summon" },
+            { 64, "Increase Critical Damage" }, { 65, "Electric Spike" }, { 66, "Force Wave" },
+            { 67, "Stun" }, { 68, "Cancel Stun" }, { 69, "Swell Mana" }, { 70, "Invisibility" },
+            { 71, "Cancel Invisibility" }, { 72, "Abolish Magic" }, { 73, "Mana Rays" },
+            { 74, "Fire Blast" }, { 76, "Plasma Storm" }, { 77, "Infinity Arrow" },
+            { 78, "Fire Scream" }, { 79, "Explosion" },
             // Summoner
-            { 60, "Chain Lightning" }, { 61, "Drain Life" }, { 62, "Lightning Orb" },
-            { 63, "Sleep" }, { 64, "Summon Satyros" }, { 65, "Summon Queen" },
-            { 66, "Summon Golem" }, { 67, "Summon Wizard" },
-            { 68, "Summon Priest" }, { 69, "Summon Storm" },
+            { 200, "Summon Monster" }, { 201, "Magic Attack Immunity" }, { 202, "Physical Attack Immunity" },
+            { 203, "Potion of Bless" }, { 204, "Potion of Soul" }, { 210, "Spell of Protection" },
+            { 211, "Spell of Restriction" }, { 212, "Spell of Pursuit" }, { 213, "Shield-Burn" },
+            { 214, "Drain Life" }, { 215, "Chain Lightning" }, { 217, "Damage Reflection" },
+            { 218, "Berserker" }, { 219, "Sleep" }, { 221, "Weakness" }, { 222, "Innovation" },
+            { 223, "Explosion" }, { 224, "Requiem" }, { 225, "Pollution" },
+            // Master skills
+            { 230, "Lightning Shock" }, { 232, "Strike of Destruction" }, { 233, "Expansion of Wizardry" },
+            { 234, "Recovery" }, { 235, "Multi-Shot" }, { 236, "Flame Strike" }, { 237, "Gigantic Storm" },
+            { 238, "Chaotic Diseier" },
             // Rage Fighter
-            { 70, "Iron Defense" }, { 71, "Critical Damage" },
-            { 74, "Beast Charge" }, { 75, "Dragon Kick" }, { 76, "Dragon Lore" },
-            { 77, "Phoenix Shot" },
-            // Common / Scrolls
-            { 200, "Horse Riding" }, { 201, "Horse Attack" },
+            { 260, "Killing Blow" }, { 261, "Beast Uppercut" }, { 262, "Chain Drive" },
+            { 263, "Dark Side" }, { 264, "Dragon Roar" }, { 265, "Dragon Slasher" },
+            { 266, "Ignore Defense" }, { 267, "Increase Health" }, { 268, "Increase Block" },
+            { 269, "Charge" }, { 270, "Phoenix Shot" },
+            // Special
+            { 495, "Earth Prison" }, { 565, "Blood Howling" },
         };
 
-        /// <summary>Chinese skill names, keyed by skill ID (mirrors <see cref="s_fallbackNames"/>).</summary>
+        /// <summary>
+        /// Chinese skill names keyed by the <b>real</b> MU/OpenMU skill IDs
+        /// (must stay aligned with <see cref="s_fallbackNames"/> and
+        /// <see cref="Client.Data.BMD.SkillDefinitions"/>).
+        /// </summary>
         private static readonly Dictionary<int, string> s_namesZh = new()
         {
-            // Dark Wizard
-            { 1, "能量球" }, { 2, "火球术" }, { 3, "力量波" },
-            { 4, "闪电" }, { 5, "旋风" }, { 6, "爆裂" },
-            { 7, "火焰" }, { 8, "地狱火" }, { 9, "邪灵" },
-            { 10, "地狱烈焰" }, { 11, "瞬间移动" }, { 12, "冰冻术" },
-            { 13, "陨石术" }, { 14, "爆炸" }, { 15, "毒云术" },
-            { 16, "月光" }, { 17, "灵魂护盾" }, { 18, "衰退术" },
-            { 19, "龙卷风" }, { 20, "水流冲击" },
-            // Dark Knight
-            { 21, "斩击" }, { 22, "强力斩" }, { 23, "旋风斩" },
-            { 24, "剑术" }, { 25, "旋转斩" }, { 26, "狂怒重击" },
-            { 27, "死亡之刺" }, { 28, "穿刺" }, { 29, "刀刃技" },
-            { 30, "血色风暴" }, { 31, "恶魔之眼" }, { 32, "彗星坠落" },
-            // Fairy Elf
-            { 33, "爆裂箭" }, { 34, "穿透" }, { 35, "冰箭" },
-            { 36, "治愈术" }, { 37, "强化防御" }, { 38, "强化攻击" },
-            { 39, "召唤哥布林" }, { 40, "召唤石魔像" },
-            { 41, "召唤刺客" }, { 42, "召唤精英雪人" },
-            { 43, "召唤黑暗骑士" }, { 44, "召唤巴利" },
-            { 45, "召唤士兵" }, { 46, "召唤眼魔" },
-            { 47, "治愈" },
-            // Magic Gladiator
-            { 48, "火焰斩" }, { 49, "烈焰打击" }, { 50, "巨型风暴" },
-            // Dark Lord
-            { 51, "火焰吐息" }, { 52, "强力斩" }, { 53, "致命斩" },
-            { 55, "召唤黑马" }, { 56, "召唤黑鸦" },
-            { 57, "净化" }, { 58, "恢复" }, { 59, "强化勇气" },
+            // Wizard
+            { 1, "毒咒" }, { 2, "陨石术" }, { 3, "闪电" }, { 4, "火球术" },
+            { 5, "火焰术" }, { 6, "瞬间移动" }, { 7, "冰冻术" }, { 8, "龙卷风" },
+            { 9, "邪灵" }, { 10, "地狱火" }, { 11, "力量波" }, { 12, "水流冲击" },
+            { 13, "彗星坠落" }, { 14, "地狱烈焰" }, { 15, "团队传送" }, { 16, "灵魂屏障" },
+            { 17, "能量球" },
+            // Knight
+            { 18, "防御" }, { 19, "上挑斩" }, { 20, "突刺" }, { 21, "上勾拳" },
+            { 22, "旋风斩" }, { 23, "斩击" }, { 24, "三重箭" }, { 26, "治愈术" },
+            { 27, "强化防御" }, { 28, "强化攻击" },
+            // Elf summons
+            { 30, "召唤哥布林" }, { 31, "召唤石魔像" }, { 32, "召唤刺客" },
+            { 33, "召唤精英雪人" }, { 34, "召唤黑暗骑士" }, { 35, "召唤巴利" },
+            { 36, "召唤士兵" },
+            // Mixed / Master
+            { 38, "衰亡术" }, { 39, "暴风雪" }, { 40, "新星" }, { 41, "旋转斩" },
+            { 42, "狂怒重击" }, { 43, "死亡之刺" }, { 44, "弦月斩" },
+            { 45, "长枪" }, { 46, "流星坠落" }, { 47, "穿刺" }, { 48, "强化生命" },
+            { 49, "火焰吐息" }, { 51, "冰箭" }, { 52, "穿透" },
+            { 55, "火焰斩" }, { 56, "强力斩" }, { 57, "螺旋斩" },
+            { 60, "原力" }, { 61, "火焰爆发" }, { 62, "大地震击" }, { 63, "召唤" },
+            { 64, "提升致命伤害" }, { 65, "雷电尖刺" }, { 66, "原力波" },
+            { 67, "眩晕" }, { 68, "解除眩晕" }, { 69, "强化魔力" }, { 70, "隐身" },
+            { 71, "解除隐身" }, { 72, "魔法消除" }, { 73, "魔力射线" },
+            { 74, "火焰冲击" }, { 76, "等离子风暴" }, { 77, "无限之箭" },
+            { 78, "火焰尖啸" }, { 79, "爆裂" },
             // Summoner
-            { 60, "连锁闪电" }, { 61, "吸取生命" }, { 62, "闪电球" },
-            { 63, "沉睡" }, { 64, "召唤萨提洛斯" }, { 65, "召唤女王" },
-            { 66, "召唤魔像" }, { 67, "召唤巫师" },
-            { 68, "召唤祭司" }, { 69, "召唤风暴" },
+            { 200, "召唤怪物" }, { 201, "魔法攻击免疫" }, { 202, "物理攻击免疫" },
+            { 203, "祝福药水" }, { 204, "灵魂药水" }, { 210, "保护咒语" },
+            { 211, "束缚咒语" }, { 212, "追踪咒语" }, { 213, "护盾燃烧" },
+            { 214, "吸取生命" }, { 215, "连锁闪电" }, { 217, "伤害反射" },
+            { 218, "狂战士" }, { 219, "沉睡" }, { 221, "弱化" }, { 222, "革新" },
+            { 223, "爆裂" }, { 224, "安魂曲" }, { 225, "污染" },
+            // Master skills
+            { 230, "闪电震击" }, { 232, "毁灭打击" }, { 233, "魔法增幅" },
+            { 234, "恢复" }, { 235, "多重射击" }, { 236, "烈焰打击" }, { 237, "巨型风暴" },
+            { 238, "混沌使者" },
             // Rage Fighter
-            { 70, "钢铁防御" }, { 71, "致命伤害" },
-            { 74, "野兽冲锋" }, { 75, "龙踢" }, { 76, "龙之传说" },
-            { 77, "凤凰射击" },
-            // Common / Scrolls
-            { 200, "骑马" }, { 201, "骑乘攻击" },
+            { 260, "致命打击" }, { 261, "野兽上勾拳" }, { 262, "连环踢" },
+            { 263, "黑暗面" }, { 264, "龙吼" }, { 265, "屠龙斩" },
+            { 266, "无视防御" }, { 267, "提升生命" }, { 268, "提升格挡" },
+            { 269, "冲锋" }, { 270, "凤凰射击" },
+            // Special
+            { 495, "大地牢笼" }, { 565, "血之咆哮" },
         };
 
         /// <summary>
