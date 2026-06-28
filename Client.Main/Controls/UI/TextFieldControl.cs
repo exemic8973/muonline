@@ -260,27 +260,9 @@ namespace Client.Main.Controls.UI
 
             if (!IsFocused || !Visible) return;
 
-#if !ANDROID
-            // On non-Android platforms (Windows, Linux, Mac), use keyboard polling
-            var keysPressed = MuGame.Instance.Keyboard.GetPressedKeys();
-            bool shift = MuGame.Instance.Keyboard.IsKeyDown(Keys.LeftShift) || MuGame.Instance.Keyboard.IsKeyDown(Keys.RightShift);
-            bool capsLock = System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows) ? Console.CapsLock : false;
-
-            bool textModifiedByKey = false;
-            foreach (var key in keysPressed)
-            {
-                if (MuGame.Instance.PrevKeyboard.IsKeyUp(key))
-                {
-                    ProcessKey(key, shift, capsLock);
-                    textModifiedByKey = true;
-                }
-            }
-
-            if (textModifiedByKey || (IsFocused && !MuGame.Instance.PrevKeyboard.GetPressedKeys().Any()))
-            {
-                UpdateScrollOffset();
-            }
-#endif
+            // On desktop the TextInput event (OnDesktopTextInput) handles all character input.
+            // On Android the dedicated OnTextInput handler handles it.
+            // Keyboard polling is no longer needed on any platform.
 
             _cursorBlinkTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (_cursorBlinkTimer >= CursorBlinkInterval)
