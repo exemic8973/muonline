@@ -538,10 +538,10 @@ namespace Client.Main.Scenes
 
         private bool TryBeginSkillCast(Core.Client.SkillEntryState skill, PlayerObject hero)
         {
-            if (hero.IsAttackOrSkillAnimationPlaying())
-                return false;
-
-            if (!TryConsumeSkillDelay(skill.SkillId))
+            // Short fixed cooldown (300ms) ensures continuous casts while holding right-click.
+            // The animation-playing check is intentionally skipped — it was preventing
+            // repeated casts during the one-shot animation window.
+            if (!TryConsumeSkillDelay(skill.SkillId, 300))
             {
                 _logger?.LogDebug("Skill {SkillId} on cooldown.", skill.SkillId);
                 return false;
@@ -586,9 +586,9 @@ namespace Client.Main.Scenes
             return true;
         }
 
-        private bool TryConsumeSkillDelay(ushort skillId)
+        private bool TryConsumeSkillDelay(ushort skillId, int minDelayMs = 300)
         {
-            int delayMs = SkillDatabase.GetSkillCooldown(skillId);
+            int delayMs = Math.Max(minDelayMs, SkillDatabase.GetSkillCooldown(skillId));
             if (delayMs <= 0)
                 return true;
 
